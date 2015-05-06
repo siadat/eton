@@ -2,9 +2,9 @@
 
 eton is a note-taking cli tool.
 
-## Install
+## Install / Upgrade
 
-    go get github.com/siadat/eton
+    go get -u github.com/siadat/eton
 
 ## Examples
 
@@ -20,8 +20,14 @@ eton is a note-taking cli tool.
     # add a file
     eton addfile file.txt
 
-    # unique aliases can be set and used instead of numeric ids
-    eton alias 2 processes
+    # a unique alias can be set and used instead of the numeric id
+    eton alias 2 all-processes
+
+    # the order of id and alias does not matter
+    eton alias all-processes 2
+
+    # you can rename an alias
+    eton alias all-processes processes
 
     # list all items
     eton ls -Lall
@@ -32,7 +38,7 @@ eton is a note-taking cli tool.
     # you can mark specific items
     eton mark processes 1
 
-    # only list marked or aliased items (short mode)
+    # only list marked items (short mode)
     eton ls -s
 
     # open an item in less
@@ -50,5 +56,7 @@ eton is a note-taking cli tool.
 Notes are stored in ~/.etondb
 
     echo 'SELECT * from attributes LIMIT 10;' |sqlite3 ~/.etondb
+
+Set `$EDITOR` environment variable to your prefered editor used by the `edit` command. E.g.,
 
 I would love to hear how you use eton. Make pull requests, report bugs, suggest ideas.
