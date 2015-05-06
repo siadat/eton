@@ -14,6 +14,9 @@ eton is a note-taking cli tool.
     # quick add
     eton new '[ ] do something'
 
+    # edit the last item
+    eton edit
+
     # add text from STDIN
     ps aux | eton new -
 
@@ -45,7 +48,7 @@ eton is a note-taking cli tool.
     eton show processes
 
     # edit items
-    eton edit {1..3}
+    eton edit {1..3} 4 prcs
 
     # alias matching is fuzzy
     eton cat prcs
