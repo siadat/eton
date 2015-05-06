@@ -1,44 +1,46 @@
 # ETON
 
+eton is a note-taking cli tool.
+
 ## Examples
 
-		eton -h
+    eton -h
 
     # quick add
-		eton new '[ ] do something'
+    eton new '[ ] do something'
 
     # add text from STDIN
-		ps aux | eton new -
+    ps aux | eton new -
 
     # add a file
-		eton addfile file.txt
+    eton addfile file.txt
 
     # unique aliases can be set and used instead of numeric ids
-		etone alias 2 processes
+    etone alias 2 processes
 
     # list all items
-		eton ls -Lall
+    eton ls -Lall
 
     # filter items containing words "thing" AND "some"
-		eton ls thing some
+    eton ls thing some
 
     # you can mark specific items
-		etone mark processes 1
+    etone mark processes 1
 
     # only list marked or aliased items (short mode)
-		etone ls -s
+    etone ls -s
 
     # open an item in less
-		etone show processes
+    etone show processes
 
     # edit items
-		etone edit {1..3}
+    etone edit {1..3}
 
     # alias matching is fuzzy
-		etone cat prcs
+    etone cat prcs
 
     # pass items to xargs as filenames:
-		etone ls something -l |xargs -i less {}
+    etone ls something -l |xargs -i less {}
 
 Notes are stored in ~/.etondb
 
