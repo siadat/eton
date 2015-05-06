@@ -550,7 +550,7 @@ func findAttributeByAlias(db *sql.DB, alias string) (attr Attr) {
 	prunes := strings.Split(alias, "")
 
 	// Fuzzy match
-	err = stmt.QueryRow("%"+strings.Join(prunes, "%")+"%").Scan(&attr.ID, &attr.ValueText, &attr.Name, &attr.ValueBlob)
+	err = stmt.QueryRow("%"+strings.Join(prunes, "%")+"%").Scan(&attr.ID, &attr.ValueText, &attr.Name, &attr.ParentID, &attr.Alias, &attr.Mark, &attr.ValueBlob, &attr.CreatedAt, &attr.UpdatedAt)
 	if err == nil {
 		return
 	}
