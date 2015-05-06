@@ -361,7 +361,11 @@ func cmdUnmark(db *sql.DB, opts Options) bool {
 /******************************************************************************/
 
 func openEditor(filepath string) {
-	cmd := exec.Command("/usr/bin/env", "vim", filepath)
+	editor := os.Getenv("EDITOR")
+	if len(editor) == 0 {
+		editor = "vim"
+	}
+	cmd := exec.Command("/usr/bin/env", editor, filepath)
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	cmd.Run()
