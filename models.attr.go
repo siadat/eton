@@ -225,7 +225,7 @@ func (attr Attr) Print(w *tabwriter.Writer, verbose bool, indent int, highlighte
 		if attr.GetMark() == 0 {
 			fmt.Printf("%s%s %s\n", Color("ID:", "default"), Color(attr.GetIdentifier(), "yellow+b"), attr.Title())
 		} else {
-			fmt.Printf("%s%s %s\n", Color("ID:", "default"), Color(attr.GetIdentifier(), "yellow+b"), Color(attr.Title(), "default+u"))
+			fmt.Printf("%s%s %s\n", Color("ID:", "black:white"), Color(attr.GetIdentifier(), "black+b:white"), Color(attr.Title(), "default"))
 		}
 		if len(highlighteds) > 0 {
 			fmt.Println(attr.PrettyMatches(highlighteds, after))
@@ -346,7 +346,7 @@ func (attr Attr) SetAlias(db *sql.DB, alias string) {
 }
 
 func (attr Attr) SetMark(db *sql.DB, mark int) (rowsAffected int64) {
-	stmt, err := db.Prepare("UPDATE attributes SET mark = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ? AND deleted_at IS NULL")
+	stmt, err := db.Prepare("UPDATE attributes SET mark = ? WHERE id = ? AND deleted_at IS NULL")
 	check(err)
 
 	result, err := stmt.Exec(mark, attr.GetID())

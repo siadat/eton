@@ -20,7 +20,8 @@ import (
 var globalDB *sql.DB
 var globalOpts Options
 
-const orderby = "-frequency, -mark, CASE WHEN updated_at IS NULL THEN created_at ELSE updated_at END DESC"
+// const orderby = "-frequency, -mark, CASE WHEN updated_at IS NULL THEN created_at ELSE updated_at END DESC"
+const orderby = "CASE WHEN updated_at IS NULL THEN created_at ELSE updated_at END DESC"
 
 func cmdShow(db *sql.DB, opts Options) bool {
 	if len(opts.IDs) == 0 && len(opts.Aliases) == 0 {
