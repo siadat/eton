@@ -1,9 +1,14 @@
-# ETON
+# eton
 
 eton is a note-taking cli tool.
 
+## Install
+
+    go get github.com/siadat/eton
+
 ## Examples
 
+    # print the complete help
     eton -h
 
     # quick add
