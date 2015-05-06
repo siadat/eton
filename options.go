@@ -12,25 +12,25 @@ const ellipsis = "…"
 const maximumShownMatches = -1 // -1
 
 type Options struct {
-	ID                  int64
-	Alias               string
-	IDs                 []int64
-	Aliases             []string
-	Limit               int
-	Offset              int
-	RootID              int64
-	Indent              int
-	Filters             []string
-	FromStdin           bool
-	Recursive           bool
-	RemovedOnly         bool
-	AliasedOrMarkedOnly bool
-	ListFilepaths       bool
-	MountPoint          string
-	Note                string
-	AfterLinesCount     int
-	Alias1              string
-	Alias2              string
+	ID              int64
+	Alias           string
+	IDs             []int64
+	Aliases         []string
+	Limit           int
+	Offset          int
+	RootID          int64
+	Indent          int
+	Filters         []string
+	FromStdin       bool
+	Recursive       bool
+	RemovedOnly     bool
+	ShortMode       bool
+	ListFilepaths   bool
+	MountPoint      string
+	Note            string
+	AfterLinesCount int
+	Alias1          string
+	Alias2          string
 }
 
 func OptionsFromArgs(args map[string]interface{}) (opts Options) {
@@ -110,7 +110,7 @@ func OptionsFromArgs(args map[string]interface{}) (opts Options) {
 	opts.Recursive = false // args["--recursive"].(bool)
 	opts.RemovedOnly = args["--removed-only"].(bool)
 
-	opts.AliasedOrMarkedOnly = args["--short"].(bool)
+	opts.ShortMode = args["--short"].(bool)
 	return
 }
 

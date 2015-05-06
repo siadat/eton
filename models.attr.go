@@ -601,8 +601,9 @@ func listWithFilters(db *sql.DB, opts Options) (attrs []Attr) {
 		sqlConditions += " AND parent_id IS NULL"
 	}
 
-	if opts.AliasedOrMarkedOnly {
-		sqlConditions += " AND ((alias IS NOT NULL AND alias != '') OR mark > 0)"
+	if opts.ShortMode {
+		// sqlConditions += " AND ((alias IS NOT NULL AND alias != '') OR mark > 0)"
+		sqlConditions += " AND mark > 0"
 	}
 
 	if opts.RootID == -1 && len(opts.Filters) > 0 {

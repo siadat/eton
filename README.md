@@ -21,7 +21,7 @@ eton is a note-taking cli tool.
     eton addfile file.txt
 
     # unique aliases can be set and used instead of numeric ids
-    etone alias 2 processes
+    eton alias 2 processes
 
     # list all items
     eton ls -Lall
@@ -30,25 +30,25 @@ eton is a note-taking cli tool.
     eton ls thing some
 
     # you can mark specific items
-    etone mark processes 1
+    eton mark processes 1
 
     # only list marked or aliased items (short mode)
-    etone ls -s
+    eton ls -s
 
     # open an item in less
-    etone show processes
+    eton show processes
 
     # edit items
-    etone edit {1..3}
+    eton edit {1..3}
 
     # alias matching is fuzzy
-    etone cat prcs
+    eton cat prcs
 
     # pass items to xargs as filenames:
-    etone ls something -l |xargs -i less {}
+    eton ls something -l |xargs -i less {}
 
 Notes are stored in ~/.etondb
 
     echo 'SELECT * from attributes LIMIT 10;' |sqlite3 ~/.etondb
 
-I would love to hear how you use etone. Make pull requests, report bugs, suggest ideas.
+I would love to hear how you use eton. Make pull requests, report bugs, suggest ideas.
