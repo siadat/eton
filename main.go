@@ -19,9 +19,9 @@ var pwd string
 const dbfilename string = ".etondb"
 
 const usage string = `Usage:
-    eton new [-|<note>]
-    eton (ls|grep) [<filters>...] [--offset OFFSET] [--limit LIMIT] [--removed-only] [--short] [--all] [--exec COMMAND] [--edit] [--list-files] [--after AFTER]
-    eton edit [<ids>...]
+    eton new [-|<note>] [-v]
+    eton (ls|grep) [<filters>...] [-Rsl] [-o OFFSET] [-L LIMIT] [--after AFTER]
+    eton edit [<ids>...] [-v]
     eton alias <id1> <id2>
     eton unalias <alias>
     eton mark <ids>...
@@ -40,6 +40,8 @@ Options:
     -r, --recursive      recursive mode
     -l, --list-files     list items as filenames
     -s, --short          short mode lists rows with aliases only
+    -v, --verbose        talk a lot
+    -R, --removed-only   only list removed notes
 `
 
 func main() {

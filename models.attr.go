@@ -401,9 +401,7 @@ func (attr Attr) Edit(db *sql.DB) (rowsAffected int64) {
 
 	openEditor(filepath)
 	value_text := readFile(filepath)
-	if value_text == attr.GetValue() {
-		fmt.Printf("Nothing changed for ID:%d\n", attr.GetID())
-	} else {
+	if value_text != attr.GetValue() {
 		update_stmt, err := db.Prepare("UPDATE attributes SET value_text = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?")
 		check(err)
 
@@ -411,7 +409,6 @@ func (attr Attr) Edit(db *sql.DB) (rowsAffected int64) {
 		check(err)
 		rowsAffected, err = result.RowsAffected()
 		check(err)
-		fmt.Printf("Updated ID:%d\n", attr.GetID())
 	}
 	return
 }
@@ -672,17 +669,17 @@ func getLastAttrID(db *sql.DB) int64 {
 	return ID
 }
 
-func saveString(db *sql.DB, value_text string) {
+func saveString(db *sql.DB, value_text string) (lastInsertId int64) {
 	new_stmt, err := db.Prepare("INSERT INTO attributes (name, value_text) VALUES ('note', ?)")
 	check(err)
 
 	result, err := new_stmt.Exec(value_text)
 	check(err)
 
-	lastInsertId, err := result.LastInsertId()
+	lastInsertId, err = result.LastInsertId()
 	check(err)
 
-	fmt.Printf("New note ID:%d\n", lastInsertId)
+	return
 }
 
 func InitializeDatabase(db *sql.DB) bool {

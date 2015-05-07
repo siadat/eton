@@ -25,6 +25,7 @@ type Options struct {
 	Recursive       bool
 	RemovedOnly     bool
 	ShortMode       bool
+	Verbose         bool
 	ListFilepaths   bool
 	MountPoint      string
 	Note            string
@@ -111,6 +112,7 @@ func OptionsFromArgs(args map[string]interface{}) (opts Options) {
 	opts.RemovedOnly = args["--removed-only"].(bool)
 
 	opts.ShortMode = args["--short"].(bool)
+	opts.Verbose = args["--verbose"].(bool)
 	return
 }
 

@@ -147,7 +147,9 @@ func cmdNew(db *sql.DB, opts Options) bool {
 				break
 			}
 			lines = append(lines, string(line))
-			log.Printf("%s\n", prettyAttr("eton", string(line)))
+			if opts.Verbose {
+				log.Printf("%s\n", prettyAttr("eton", string(line)))
+			}
 		}
 		value_text = strings.Join(lines, "\n")
 	} else if len(opts.Note) > 0 {
@@ -160,7 +162,10 @@ func cmdNew(db *sql.DB, opts Options) bool {
 		value_text = readFile(f.Name())
 	}
 
-	saveString(db, value_text)
+	lastInsertId := saveString(db, value_text)
+	if lastInsertId > 0 && opts.Verbose {
+		fmt.Printf("New note ID:%d\n", lastInsertId)
+	}
 
 	return true
 }
@@ -276,7 +281,7 @@ func cmdEdit(db *sql.DB, opts Options) bool {
 		totalUpdated += attr.Edit(db)
 	}
 
-	if totalUpdated > 0 {
+	if opts.Verbose {
 		fmt.Println(totalUpdated, "records updated")
 	}
 
