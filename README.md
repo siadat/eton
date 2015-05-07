@@ -51,7 +51,7 @@ eton show processes
 # edit items
 eton edit {1..3} 4 prcs
 
-# alias matching is fuzzy
+# alias matching is fuzzy for cat, show, edit, mark, unmark commands
 eton cat prcs
 
 # pass items to xargs as filenames:

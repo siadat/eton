@@ -335,9 +335,9 @@ func (attr Attr) SetAlias(db *sql.DB, alias string) {
 	//check(err)
 	if err == nil {
 		if unset {
-			fmt.Printf("alias NULL set for ID:%d\n", attr.GetID())
+			fmt.Printf("ID:%d unaliased\n", attr.GetID())
 		} else {
-			fmt.Printf("alias \"%s\" set for ID:%d\n", alias, attr.GetID())
+			fmt.Printf("alias set: %s => %s\n", attr.GetIdentifier(), alias)
 		}
 	} else {
 		log.Fatalf("error while setting alias \"%s\" for ID:%d -- alias must be unique\n", alias, attr.GetID()) // , err)
@@ -511,7 +511,7 @@ func findAttributeByID(db *sql.DB, ID int64) (attr Attr) {
 	return
 }
 
-func findAttributeByAlias(db *sql.DB, alias string) (attr Attr) {
+func findAttributeByAlias(db *sql.DB, alias string, exactMatchOnly bool) (attr Attr) {
 	var err error
 	var stmt *sql.Stmt
 
@@ -526,6 +526,10 @@ func findAttributeByAlias(db *sql.DB, alias string) (attr Attr) {
 	check(err)
 	err = stmt.QueryRow(alias).Scan(&attr.ID, &attr.ValueText, &attr.Name, &attr.ParentID, &attr.Alias, &attr.Mark, &attr.ValueBlob, &attr.CreatedAt, &attr.UpdatedAt)
 	if err == nil {
+		return
+	}
+
+	if exactMatchOnly {
 		return
 	}
 
@@ -556,7 +560,7 @@ func findAttributeByAlias(db *sql.DB, alias string) (attr Attr) {
 }
 
 func findAttributeByAliasOrID(db *sql.DB, alias_or_id string) (attr Attr) {
-	attr = findAttributeByAlias(db, alias_or_id)
+	attr = findAttributeByAlias(db, alias_or_id, false)
 	if attr.GetID() <= 0 {
 
 		intID, err := strconv.Atoi(alias_or_id)
@@ -574,15 +578,15 @@ func findAttributeByAliasOrID(db *sql.DB, alias_or_id string) (attr Attr) {
 func listWithFilters(db *sql.DB, opts Options) (attrs []Attr) {
 	var stmt *sql.Stmt
 	var rows *sql.Rows
-	var nolimit = opts.Limit == -1
+	var nolimit = opts.Limit == -1 || opts.IncludeRemoved
 
 	var sqlConditions string
 	var sqlLimit string
 
 	queryValues := make([]interface{}, 0, 5)
 
-	if opts.RemovedOnly {
-		sqlConditions = "deleted_at IS NOT NULL"
+	if opts.IncludeRemoved {
+		sqlConditions = "1"
 	} else {
 		sqlConditions = "deleted_at IS NULL"
 	}

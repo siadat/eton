@@ -20,7 +20,7 @@ const dbfilename string = ".etondb"
 
 const usage string = `Usage:
     eton new [-|<note>] [-v]
-    eton (ls|grep) [<filters>...] [-Rsl] [-o OFFSET] [-L LIMIT] [--after AFTER]
+    eton (ls|grep) [<filters>...] [-asl] [-o OFFSET] [-L LIMIT] [--after AFTER]
     eton edit [<ids>...] [-v]
     eton alias <id1> <id2>
     eton unalias <alias>
@@ -41,7 +41,7 @@ Options:
     -l, --list-files     list items as filenames
     -s, --short          short mode lists rows with aliases only
     -v, --verbose        talk a lot
-    -R, --removed-only   only list removed notes
+    -a, --all            include removed items as well
 `
 
 func main() {

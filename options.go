@@ -23,7 +23,7 @@ type Options struct {
 	Filters         []string
 	FromStdin       bool
 	Recursive       bool
-	RemovedOnly     bool
+	IncludeRemoved  bool
 	ShortMode       bool
 	Verbose         bool
 	ListFilepaths   bool
@@ -109,7 +109,7 @@ func OptionsFromArgs(args map[string]interface{}) (opts Options) {
 	opts.Filters = args["<filters>"].([]string)
 	opts.FromStdin = args["-"].(bool)
 	opts.Recursive = false // args["--recursive"].(bool)
-	opts.RemovedOnly = args["--removed-only"].(bool)
+	opts.IncludeRemoved = args["--all"].(bool)
 
 	opts.ShortMode = args["--short"].(bool)
 	opts.Verbose = args["--verbose"].(bool)

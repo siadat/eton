@@ -35,7 +35,7 @@ func cmdShow(db *sql.DB, opts Options) bool {
 	}
 
 	for _, alias := range opts.Aliases {
-		attr := findAttributeByAlias(db, alias)
+		attr := findAttributeByAlias(db, alias, false)
 		//fmt.Printf(attr.GetValue())
 		printToLess(attr.GetValue())
 	}
@@ -53,7 +53,7 @@ func cmdCat(db *sql.DB, opts Options) bool {
 	}
 
 	for _, alias := range opts.Aliases {
-		attr := findAttributeByAlias(db, alias)
+		attr := findAttributeByAlias(db, alias, false)
 		fmt.Printf(attr.GetValue())
 	}
 	return true
@@ -226,7 +226,7 @@ func cmdAddAttr(db *sql.DB, id int, attrs []string) bool {
 }
 
 func cmdUnalias(db *sql.DB, opts Options) bool {
-	attr := findAttributeByAlias(db, opts.Alias)
+	attr := findAttributeByAlias(db, opts.Alias, true)
 	if attr.GetID() == -1 {
 		log.Fatalf("alias \"%s\" not found", opts.Alias)
 	} else {
@@ -250,8 +250,8 @@ func cmdAlias(db *sql.DB, opts Options) bool {
 			attr.SetAlias(db, opts.Alias2)
 		}
 	} else if len(opts.Alias1) > 0 && len(opts.Alias2) > 0 {
-		attr1 := findAttributeByAlias(db, opts.Alias1)
-		attr2 := findAttributeByAlias(db, opts.Alias2)
+		attr1 := findAttributeByAlias(db, opts.Alias1, true)
+		attr2 := findAttributeByAlias(db, opts.Alias2, true)
 
 		if attr1.GetID() > 0 && attr2.GetID() <= 0 {
 			attr1.SetAlias(db, opts.Alias2)
@@ -277,7 +277,7 @@ func cmdEdit(db *sql.DB, opts Options) bool {
 	}
 
 	for _, alias := range opts.Aliases {
-		attr := findAttributeByAlias(db, alias)
+		attr := findAttributeByAlias(db, alias, false)
 		totalUpdated += attr.Edit(db)
 	}
 
@@ -298,7 +298,7 @@ func cmdRm(db *sql.DB, opts Options) bool {
 	}
 
 	for _, alias := range opts.Aliases {
-		attr := findAttributeByAlias(db, alias)
+		attr := findAttributeByAlias(db, alias, true)
 		totalUpdated += attr.Rm(db)
 	}
 
@@ -318,7 +318,7 @@ func cmdUnrm(db *sql.DB, opts Options) bool {
 	}
 
 	for _, alias := range opts.Aliases {
-		attr := findAttributeByAlias(db, alias)
+		attr := findAttributeByAlias(db, alias, true)
 		totalUpdated += attr.Unrm(db)
 	}
 
@@ -342,7 +342,7 @@ func cmdMark(db *sql.DB, opts Options) bool {
 	}
 
 	for _, alias := range opts.Aliases {
-		attr := findAttributeByAlias(db, alias)
+		attr := findAttributeByAlias(db, alias, false)
 		totalUpdated += attr.SetMark(db, 1)
 	}
 
@@ -358,7 +358,7 @@ func cmdUnmark(db *sql.DB, opts Options) bool {
 	}
 
 	for _, alias := range opts.Aliases {
-		attr := findAttributeByAlias(db, alias)
+		attr := findAttributeByAlias(db, alias, false)
 		totalUpdated += attr.SetMark(db, 0)
 	}
 
