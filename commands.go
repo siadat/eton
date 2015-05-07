@@ -22,6 +22,7 @@ var globalOpts Options
 
 // const orderby = "-frequency, -mark, CASE WHEN updated_at IS NULL THEN created_at ELSE updated_at END DESC"
 const orderby = "CASE WHEN updated_at IS NULL THEN created_at ELSE updated_at END DESC"
+const defaultEditor = "vi"
 
 func cmdShow(db *sql.DB, opts Options) bool {
 	if len(opts.IDs) == 0 && len(opts.Aliases) == 0 {
@@ -60,12 +61,14 @@ func cmdCat(db *sql.DB, opts Options) bool {
 }
 
 func cmdMount(db *sql.DB, opts Options) bool {
-	// check if opts.MountPoint directory exists, if it exists do nothing, if it doesn't create it and continue
-	globalDB = db
-	globalOpts = opts
-	globalOpts.Offset = 0
-	globalOpts.Limit = 40
-	Mount(opts.MountPoint)
+	log.Println("Not implemented yet")
+	/*
+		globalDB = db
+		globalOpts = opts
+		globalOpts.Offset = 0
+		globalOpts.Limit = 40
+		Mount(opts.MountPoint)
+	*/
 	return true
 }
 
@@ -362,11 +365,20 @@ func cmdUnmark(db *sql.DB, opts Options) bool {
 /******************************************************************************/
 
 func openEditor(filepath string) {
+	var cmd *exec.Cmd
+
 	editor := os.Getenv("EDITOR")
-	if len(editor) == 0 {
-		editor = "vim"
+
+	if len(editor) > 0 {
+		cmd = exec.Command("/usr/bin/env", editor, filepath)
+	} else {
+		if _, err := os.Stat("/usr/bin/sensible-editor"); err == nil {
+			cmd = exec.Command("/usr/bin/sensible-editor", filepath)
+		} else {
+			cmd = exec.Command("/usr/bin/env", defaultEditor, filepath)
+		}
 	}
-	cmd := exec.Command("/usr/bin/env", editor, filepath)
+
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	cmd.Run()

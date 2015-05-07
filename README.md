@@ -8,7 +8,7 @@ eton is a note-taking cli tool.
 
 ## Examples
 
-    # print the complete help
+    # display the help message
     eton -h
 
     # quick add
