@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"database/sql"
 	"fmt"
-	_ "github.com/hanwen/go-fuse/fuse"
 	_ "github.com/mattn/go-sqlite3"
 	"io"
 	"io/ioutil"
