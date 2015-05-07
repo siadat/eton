@@ -223,9 +223,9 @@ func (attr Attr) Print(w *tabwriter.Writer, verbose bool, indent int, highlighte
 		//fmt.Printf(strings.Repeat("      ", indent))
 
 		if attr.GetMark() == 0 {
-			fmt.Printf("%s%s %s\n", Color("ID:", "default"), Color(attr.GetIdentifier(), "yellow+b"), attr.Title())
+			fmt.Printf("[%s] %s\n", Color(attr.GetIdentifier(), "yellow+b"), attr.Title())
 		} else {
-			fmt.Printf("%s%s %s\n", Color("ID:", "black:white"), Color(attr.GetIdentifier(), "black+b:white"), Color(attr.Title(), "default"))
+			fmt.Printf("[%s] %s\n", Color(attr.GetIdentifier(), "black+b:white"), Color(attr.Title(), "default"))
 		}
 		if len(highlighteds) > 0 {
 			fmt.Println(attr.PrettyMatches(highlighteds, after))

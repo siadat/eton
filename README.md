@@ -15,6 +15,9 @@ eton -h
 # quick add
 eton new '[ ] do something'
 
+# create a new note and open $EDITOR to edit it
+eton new
+
 # edit the last item
 eton edit
 
