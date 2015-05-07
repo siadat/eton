@@ -58,8 +58,8 @@ eton is a note-taking cli tool.
 
 Notes are stored in ~/.etondb
 
-    echo 'SELECT * from attributes LIMIT 10;' |sqlite3 ~/.etondb
+    echo 'SELECT * FROM attributes LIMIT 10;' |sqlite3 ~/.etondb
 
-Set `$EDITOR` environment variable to your prefered editor used by the `edit` command. E.g.,
+Set `$EDITOR` environment variable to edit notes in your prefered editor, e.g., `export EDITOR=vim`.
 
 I would love to hear how you use eton. Make pull requests, report bugs, suggest ideas.

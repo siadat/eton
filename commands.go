@@ -369,7 +369,7 @@ func openEditor(filepath string) {
 	editor := os.Getenv("EDITOR")
 
 	if len(editor) > 0 {
-		cmd = exec.Command("/usr/bin/env", editor, filepath)
+		cmd = exec.Command(editor, filepath)
 	} else {
 		if _, err := os.Stat("/usr/bin/sensible-editor"); err == nil {
 			cmd = exec.Command("/usr/bin/sensible-editor", filepath)
