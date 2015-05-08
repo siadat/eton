@@ -37,7 +37,7 @@ eton alias all-processes 2
 eton alias all-processes processes
 
 # list all items
-eton ls -Lall
+eton ls -a
 
 # filter items containing words "thing" AND "some"
 eton ls thing some

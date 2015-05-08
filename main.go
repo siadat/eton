@@ -20,7 +20,7 @@ const dbfilename string = ".etondb"
 
 const usage string = `Usage:
     eton new [-|<note>] [-v]
-    eton (ls|grep) [<filters>...] [-asl] [-o OFFSET] [-L LIMIT] [--after AFTER]
+    eton (ls|grep) [<filters>...] [-asl] [-o OFFSET] [-L LIMIT] [--after AFTER] [--removed]
     eton edit [<ids>...] [-v]
     eton alias <id1> <id2>
     eton unalias <alias>
@@ -41,11 +41,13 @@ Options:
     -l, --list-files     list items as filenames
     -s, --short          short mode lists rows with aliases only
     -v, --verbose        talk a lot
-    -a, --all            include removed items as well
+    -a, --all            list all items, alias for --limit -1
+    --removed            only removed items
 `
 
 func main() {
-	args, _ := docopt.Parse(usage, nil, true, "version 0.0.0", false, true)
+	args, err := docopt.Parse(usage, nil, true, "version 0.0.0", false, true)
+	check(err)
 
 	opts := OptionsFromArgs(args)
 
@@ -56,7 +58,7 @@ func main() {
 
 	dbfileExists := false
 
-	if _, err := os.Stat(dbfile); err == nil {
+	if _, err = os.Stat(dbfile); err == nil {
 		dbfileExists = true
 	}
 

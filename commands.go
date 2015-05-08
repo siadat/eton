@@ -136,7 +136,6 @@ func cmdNew(db *sql.DB, opts Options) bool {
 		go func() {
 			for _ = range c {
 				// CTRL-c
-				// Do nothing, this will continue executing the rest of the code
 			}
 		}()
 

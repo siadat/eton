@@ -228,7 +228,7 @@ func (attr Attr) Print(w *tabwriter.Writer, verbose bool, indent int, highlighte
 		if attr.GetMark() == 0 {
 			fmt.Fprintf(out, "[%s] %s\n", Color(attr.GetIdentifier(), "yellow+b"), attr.Title())
 		} else {
-			fmt.Fprintf(out, "[%s] %s\n", Color(attr.GetIdentifier(), "black+b:white"), Color(attr.Title(), "default"))
+			fmt.Fprintf(out, "%s %s\n", Color("["+attr.GetIdentifier()+"]", "black+b:white"), Color(attr.Title(), "default"))
 		}
 		if len(highlighteds) > 0 {
 			fmt.Fprintln(out, attr.PrettyMatches(highlighteds, after))
@@ -582,7 +582,7 @@ func findAttributeByAliasOrID(db *sql.DB, alias_or_id string) (attr Attr) {
 func listWithFilters(db *sql.DB, opts Options) (attrs []Attr) {
 	var stmt *sql.Stmt
 	var rows *sql.Rows
-	var nolimit = opts.Limit == -1 || opts.IncludeRemoved
+	var nolimit = opts.Limit == -1
 
 	var sqlConditions string
 	var sqlLimit string
@@ -590,7 +590,7 @@ func listWithFilters(db *sql.DB, opts Options) (attrs []Attr) {
 	queryValues := make([]interface{}, 0, 5)
 
 	if opts.IncludeRemoved {
-		sqlConditions = "1"
+		sqlConditions = "deleted_at IS NOT NULL"
 	} else {
 		sqlConditions = "deleted_at IS NULL"
 	}

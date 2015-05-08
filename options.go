@@ -53,7 +53,7 @@ func OptionsFromArgs(args map[string]interface{}) (opts Options) {
 	opts.AfterLinesCount, err = strconv.Atoi(args["--after"].(string))
 	check(err)
 
-	if args["--limit"].(string) == "all" {
+	if args["--all"].(bool) || args["--limit"].(string) == "all" {
 		opts.Limit = -1
 	} else {
 		opts.Limit, err = strconv.Atoi(args["--limit"].(string))
@@ -109,7 +109,7 @@ func OptionsFromArgs(args map[string]interface{}) (opts Options) {
 	opts.Filters = args["<filters>"].([]string)
 	opts.FromStdin = args["-"].(bool)
 	opts.Recursive = false // args["--recursive"].(bool)
-	opts.IncludeRemoved = args["--all"].(bool)
+	opts.IncludeRemoved = args["--removed"].(bool)
 
 	opts.ShortMode = args["--short"].(bool)
 	opts.Verbose = args["--verbose"].(bool)
