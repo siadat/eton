@@ -309,6 +309,7 @@ func (attr Attr) prettyUpdatedAt() string {
 func (attr Attr) Filepath() string {
 	f, err := ioutil.TempFile("", "eton-edit")
 	check(err)
+	f.Close()
 	writeToFile(f.Name(), attr.GetValue())
 	return f.Name()
 }
