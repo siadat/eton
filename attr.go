@@ -17,7 +17,7 @@ import (
 	"time"
 )
 
-var out = colorable.NewColorableStderr()
+var out = colorable.NewColorableStdout()
 
 // Attr holds the data fetched from a row
 // Only 1 ValueXxx field should have value, the others should be nil
