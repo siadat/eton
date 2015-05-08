@@ -5,6 +5,7 @@ import (
 	"database/sql/driver"
 	"fmt"
 	"github.com/andrew-d/go-termutil"
+	"github.com/mattn/go-colorable"
 	"github.com/mgutz/ansi"
 	"io/ioutil"
 	"log"
@@ -15,6 +16,8 @@ import (
 	"text/tabwriter"
 	"time"
 )
+
+var out = colorable.NewColorableStdout()
 
 // Attr holds the data fetched from a row
 // Only 1 ValueXxx field should have value, the others should be nil
@@ -223,12 +226,12 @@ func (attr Attr) Print(w *tabwriter.Writer, verbose bool, indent int, highlighte
 		//fmt.Printf(strings.Repeat("      ", indent))
 
 		if attr.GetMark() == 0 {
-			fmt.Printf("[%s] %s\n", Color(attr.GetIdentifier(), "yellow+b"), attr.Title())
+			fmt.Fprintf(out, "[%s] %s\n", Color(attr.GetIdentifier(), "yellow+b"), attr.Title())
 		} else {
-			fmt.Printf("[%s] %s\n", Color(attr.GetIdentifier(), "black+b:white"), Color(attr.Title(), "default"))
+			fmt.Fprintf(out, "[%s] %s\n", Color(attr.GetIdentifier(), "black+b:white"), Color(attr.Title(), "default"))
 		}
 		if len(highlighteds) > 0 {
-			fmt.Println(attr.PrettyMatches(highlighteds, after))
+			fmt.Fprintln(out, attr.PrettyMatches(highlighteds, after))
 		}
 	}
 }
@@ -318,7 +321,7 @@ func (attr Attr) SetAlias(db *sql.DB, alias string) {
 	if !unset {
 		var validAlias = regexp.MustCompile(`[^\s\d]+`)
 		if !validAlias.MatchString(alias) {
-			fmt.Println("Alias must contain a non-numeric character")
+			fmt.Fprintln(out, "Alias must contain a non-numeric character")
 			return
 		}
 	}
@@ -335,9 +338,9 @@ func (attr Attr) SetAlias(db *sql.DB, alias string) {
 	//check(err)
 	if err == nil {
 		if unset {
-			fmt.Printf("ID:%d unaliased\n", attr.GetID())
+			fmt.Fprintf(out, "ID:%d unaliased\n", attr.GetID())
 		} else {
-			fmt.Printf("alias set: %s => %s\n", attr.GetIdentifier(), alias)
+			fmt.Fprintf(out, "alias set: %s => %s\n", attr.GetIdentifier(), alias)
 		}
 	} else {
 		log.Fatalf("error while setting alias \"%s\" for ID:%d -- alias must be unique\n", alias, attr.GetID()) // , err)
@@ -726,7 +729,7 @@ func InitializeDatabase(db *sql.DB) bool {
 		log.Fatal(err)
 		return false
 	}
-	fmt.Println("repository initiated")
+	fmt.Fprintln(out, "repository initiated")
 	return true
 }
 

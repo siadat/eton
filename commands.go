@@ -157,8 +157,11 @@ func cmdNew(db *sql.DB, opts Options) bool {
 	} else {
 		f, err := ioutil.TempFile("", "eton-edit")
 		check(err)
+		f.Close()
 
-		openEditor(f.Name())
+		if openEditor(f.Name()) == false {
+			return false
+		}
 		value_text = readFile(f.Name())
 	}
 
@@ -368,7 +371,7 @@ func cmdUnmark(db *sql.DB, opts Options) bool {
 
 /******************************************************************************/
 
-func openEditor(filepath string) {
+func openEditor(filepath string) bool {
 	var cmd *exec.Cmd
 
 	editor := os.Getenv("EDITOR")
@@ -385,7 +388,12 @@ func openEditor(filepath string) {
 
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
-	cmd.Run()
+	err := cmd.Run()
+	if err != nil {
+		log.Println(err)
+		return false
+	}
+	return true
 }
 
 func readFile(filepath string) string {
