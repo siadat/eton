@@ -161,7 +161,12 @@ func cmdNew(db *sql.DB, opts Options) bool {
 		if openEditor(f.Name()) == false {
 			return false
 		}
+
 		value_text = readFile(f.Name())
+
+		if len(value_text) == 0 {
+			return false
+		}
 	}
 
 	lastInsertId := saveString(db, value_text)
