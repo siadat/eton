@@ -430,7 +430,14 @@ func highlightLine(line string, highlighteds []string) (string, bool) {
 		return line, false
 	} else {
 		reFlags := "(?i)"
-		re := regexp.MustCompile(reFlags + "(" + strings.Join(highlighteds, "|") + ")")
+
+		quotedHighlighteds := make([]string, len(highlighteds), len(highlighteds))
+
+		for i, str := range highlighteds {
+			quotedHighlighteds[i] = regexp.QuoteMeta(str)
+		}
+
+		re := regexp.MustCompile(reFlags + "(" + strings.Join(quotedHighlighteds, "|") + ")")
 		if indexes := re.FindStringIndex(line); indexes != nil {
 			var indexBegin int
 			var indexEnd int

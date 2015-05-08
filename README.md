@@ -13,7 +13,7 @@ eton is a note-taking cli tool.
 eton -h
 
 # quick add
-eton new '[ ] do something'
+eton new '[ ] try eton'
 
 # create a new note and open $EDITOR to edit it
 eton new
@@ -39,8 +39,8 @@ eton alias all-processes processes
 # list all items
 eton ls -a
 
-# filter items containing words "thing" AND "some"
-eton ls thing some
+# filter items containing words "word1" AND "word2"
+eton ls word1 word2
 
 # you can mark specific items
 eton mark processes 1
@@ -58,7 +58,7 @@ eton edit {1..3} 4 prcs
 eton cat prcs
 
 # pass items to xargs as filenames:
-eton ls something -l |xargs -i less {}
+eton ls '[ ]' -l |xargs -i less {}
 ```
 
 Notes are stored in ~/.etondb
