@@ -157,6 +157,7 @@ func cmdNew(db *sql.DB, opts Options) bool {
 	} else {
 		f, err := ioutil.TempFile("", "eton-edit")
 		check(err)
+		f.Close()
 
 		openEditor(f.Name())
 		value_text = readFile(f.Name())
