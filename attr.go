@@ -398,13 +398,14 @@ func (attr Attr) IncrementFrequency(db *sql.DB) (rowsAffected int64) {
 }
 
 func (attr Attr) Edit(db *sql.DB) (rowsAffected int64) {
-	// f, err := ioutil.TempFile("", "eton-edit")
-	// check(err)
-	// writeToFile(f.Name(), attr.GetValue())
 	filepath := attr.Filepath()
 
-	openEditor(filepath)
+	if openEditor(filepath) == false {
+		return
+	}
+
 	value_text := readFile(filepath)
+
 	if value_text != attr.GetValue() {
 		update_stmt, err := db.Prepare("UPDATE attributes SET value_text = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?")
 		check(err)
