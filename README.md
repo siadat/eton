@@ -2,11 +2,16 @@
 
 eton is a note-taking cli tool.
 
-## Install / Upgrade
+  * sqlite database storage
+  * fast search
+  * quick access using unique aliases
+  * marking important notes
+
+## Install or upgrade
 
     go get -u github.com/siadat/eton
 
-## Examples
+## Usage examples
 
 ```shell
 # display the help message
@@ -61,7 +66,7 @@ eton cat prcs
 eton ls '[ ]' -l |xargs -i less {}
 ```
 
-Notes are stored in ~/.etondb
+Notes are stored in `~/.etondb`
 
 ```shell
 echo 'SELECT * FROM attributes LIMIT 10;' |sqlite3 ~/.etondb

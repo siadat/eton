@@ -699,6 +699,7 @@ func saveString(db *sql.DB, value_text string) (lastInsertId int64) {
 }
 
 func InitializeDatabase(db *sql.DB) bool {
+	// TODO use fts3 for faster full-text search: CREATE VIRTUAL TABLE attributes USING fts3 (...)
 	sqlStmt := `
   DROP TABLE IF EXISTS attributes;
 	CREATE TABLE attributes (
