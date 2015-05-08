@@ -386,7 +386,7 @@ func openEditor(filepath string) {
 
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
-	cmd.Run()
+	check(cmd.Run())
 }
 
 func readFile(filepath string) string {
