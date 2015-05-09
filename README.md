@@ -32,14 +32,17 @@ ps aux | eton new -
 # add a file
 eton addfile file.txt
 
-# a unique alias can be set and used instead of the numeric id
-eton alias 2 all-processes
+# use the alias instead of its id
+eton show 2
 
-# the order of id and alias does not matter
-eton alias all-processes 2
+# set a unique alias
+eton alias 2 procs
+
+# use the alias, so you don't need to remember its id
+eton cat procs
 
 # you can rename an alias
-eton alias all-processes processes
+eton alias procs processes
 
 # list all items
 eton ls -a
@@ -53,13 +56,10 @@ eton mark processes 1
 # only list marked items (short mode)
 eton ls -s
 
-# open an item in less
-eton show processes
-
 # edit items
-eton edit {1..3} 4 prcs
+eton edit processes 1
 
-# alias matching is fuzzy for cat, show, edit, mark, unmark commands
+# alias matching is fuzzy for these commands: cat, show, edit, mark, unmark
 eton cat prcs
 
 # pass items to xargs as filenames:
