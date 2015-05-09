@@ -4,8 +4,8 @@ eton is a note-taking cli tool.
 
   * sqlite database storage
   * fast search
-  * quick access using unique aliases
-  * marking important notes
+  * quick and direct access to a note using a unique alias
+  * mark important notes
 
 ## Install or upgrade
 

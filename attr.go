@@ -228,7 +228,7 @@ func (attr Attr) Print(w *tabwriter.Writer, verbose bool, indent int, highlighte
 		if attr.GetMark() == 0 {
 			fmt.Fprintf(out, "[%s] %s\n", Color(attr.GetIdentifier(), "yellow+b"), attr.Title())
 		} else {
-			fmt.Fprintf(out, "%s %s\n", Color("["+attr.GetIdentifier()+"]", "black+b:white"), Color(attr.Title(), "default"))
+			fmt.Fprintf(out, "%s %s\n", Color("("+attr.GetIdentifier()+")", "black+b:white"), Color(attr.Title(), "default"))
 		}
 		if len(highlighteds) > 0 {
 			fmt.Fprintln(out, attr.PrettyMatches(highlighteds, after))
@@ -254,12 +254,13 @@ func (attr Attr) PrettyMatches(highlighteds []string, after int) string {
 			line, matched := highlightLine(line, highlighteds)
 			if matched {
 				lastMatchingLine = linenumber
-				if true { // !isCoveredByLastMatch {
+				if true || !isCoveredByLastMatch {
 					matchCounter += 1
 				}
 			}
 			if matched || isCoveredByLastMatch {
-				prefix := fmt.Sprintf("%s L%s:", strings.Repeat(" ", len(attr.GetIdentifier())), strconv.Itoa(linenumber+1))
+				//prefix := fmt.Sprintf("%s L%s:", strings.Repeat(" ", len(attr.GetIdentifier())), strconv.Itoa(linenumber+1))
+				prefix := fmt.Sprintf("%s", strings.Repeat(" ", 3+len(attr.GetIdentifier())))
 				matchinglines = append(matchinglines, Color(prefix, "black")+line)
 				if maximumShownMatches != -1 && matchCounter >= maximumShownMatches {
 					break

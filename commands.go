@@ -20,7 +20,7 @@ var globalDB *sql.DB
 var globalOpts Options
 
 // const orderby = "-frequency, -mark, CASE WHEN updated_at IS NULL THEN created_at ELSE updated_at END DESC"
-const orderby = "CASE WHEN updated_at IS NULL THEN created_at ELSE updated_at END DESC"
+const orderby = "-mark, CASE WHEN updated_at IS NULL THEN created_at ELSE updated_at END DESC"
 const defaultEditor = "vi"
 
 func cmdShow(db *sql.DB, opts Options) bool {
@@ -394,7 +394,8 @@ func openEditor(filepath string) bool {
 	cmd.Stdout = os.Stdout
 	err := cmd.Run()
 	if err != nil {
-		log.Println(err)
+		log.Println("Error:", err)
+		log.Println("File not saved:", filepath)
 		return false
 	}
 	return true

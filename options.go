@@ -9,7 +9,7 @@ import (
 const novalue string = "nil"
 const datelayout string = "06/01/02 03:04pm"
 const ellipsis = "…"
-const maximumShownMatches = -1 // -1
+const maximumShownMatches = -1
 
 type Options struct {
 	ID              int64
