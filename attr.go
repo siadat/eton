@@ -519,7 +519,7 @@ func findAttributeByID(db *sql.DB, ID int64) (attr Attr) {
 
 	err = stmt.QueryRow(ID).Scan(&attr.ID, &attr.ValueText, &attr.Name, &attr.ParentID, &attr.Alias, &attr.Mark, &attr.ValueBlob, &attr.CreatedAt, &attr.UpdatedAt)
 	if err != nil {
-		log.Fatalln("No record found with id", ID, err)
+		// log.Fatalln("No record found with id", ID, err)
 	}
 	return
 }
