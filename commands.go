@@ -16,50 +16,50 @@ import (
 	"text/tabwriter"
 )
 
-var globalDB *sql.DB
-var globalOpts Options
+// var globalDB *sql.DB
+// var globalOpts options
 
 // const orderby = "-frequency, -mark, CASE WHEN updated_at IS NULL THEN created_at ELSE updated_at END DESC"
 const orderby = "-mark, CASE WHEN updated_at IS NULL THEN created_at ELSE updated_at END DESC"
 const defaultEditor = "vi"
 
-func cmdShow(db *sql.DB, opts Options) bool {
+func cmdShow(db *sql.DB, opts options) bool {
 	if len(opts.IDs) == 0 && len(opts.Aliases) == 0 {
 		opts.IDs = append(opts.IDs, int64(getLastAttrID(db)))
 	}
 
 	for _, id := range opts.IDs {
 		attr := findAttributeByID(db, id)
-		//fmt.Printf(attr.GetValue())
-		printToLess(attr.GetValue())
+		//fmt.Printf(attr.getValue())
+		printToLess(attr.getValue())
 	}
 
 	for _, alias := range opts.Aliases {
 		attr := findAttributeByAlias(db, alias, false)
-		//fmt.Printf(attr.GetValue())
-		printToLess(attr.GetValue())
+		//fmt.Printf(attr.getValue())
+		printToLess(attr.getValue())
 	}
 	return true
 }
 
-func cmdCat(db *sql.DB, opts Options) bool {
+func cmdCat(db *sql.DB, opts options) bool {
 	if len(opts.IDs) == 0 && len(opts.Aliases) == 0 {
 		opts.IDs = append(opts.IDs, int64(getLastAttrID(db)))
 	}
 
 	for _, id := range opts.IDs {
 		attr := findAttributeByID(db, id)
-		fmt.Printf(attr.GetValue())
+		fmt.Printf(attr.getValue())
 	}
 
 	for _, alias := range opts.Aliases {
 		attr := findAttributeByAlias(db, alias, false)
-		fmt.Printf(attr.GetValue())
+		fmt.Printf(attr.getValue())
 	}
 	return true
 }
 
-func cmdMount(db *sql.DB, opts Options) bool {
+func cmdMount(db *sql.DB, opts options) bool {
 	log.Println("Not implemented yet")
 	/*
 		globalDB = db
@@ -110,21 +110,21 @@ func cmdAddFiles(db *sql.DB, files []string) bool {
 	return true
 }
 
-func cmdLs(db *sql.DB, w *tabwriter.Writer, opts Options) bool {
+func cmdLs(db *sql.DB, w *tabwriter.Writer, opts options) bool {
 	attrs := listWithFilters(db, opts)
 	for _, attr := range attrs {
 		if opts.ListFilepaths {
-			fmt.Println(attr.Filepath())
+			fmt.Println(attr.filepath())
 		} else {
-			attr.Print(w, opts.Recursive, opts.Indent, opts.Filters, opts.AfterLinesCount)
+			attr.print(w, opts.Recursive, opts.Indent, opts.Filters, opts.AfterLinesCount)
 		}
 	}
 	return true
 }
 
-func cmdNew(db *sql.DB, opts Options) bool {
+func cmdNew(db *sql.DB, opts options) bool {
 
-	var value_text string
+	var valueText string
 
 	if opts.FromStdin {
 		lines := make([]string, 0, 0)
@@ -150,9 +150,9 @@ func cmdNew(db *sql.DB, opts Options) bool {
 				log.Printf("%s\n", prettyAttr("eton", string(line)))
 			}
 		}
-		value_text = strings.Join(lines, "\n")
+		valueText = strings.Join(lines, "\n")
 	} else if len(opts.Note) > 0 {
-		value_text = opts.Note
+		valueText = opts.Note
 	} else {
 		f, err := ioutil.TempFile("", "eton-edit")
 		check(err)
@@ -162,16 +162,16 @@ func cmdNew(db *sql.DB, opts Options) bool {
 			return false
 		}
 
-		value_text = readFile(f.Name())
+		valueText = readFile(f.Name())
 
-		if len(value_text) == 0 {
+		if len(valueText) == 0 {
 			return false
 		}
 	}
 
-	lastInsertId := saveString(db, value_text)
-	if lastInsertId > 0 && opts.Verbose {
-		fmt.Printf("New note ID:%d\n", lastInsertId)
+	lastInsertID := saveString(db, valueText)
+	if lastInsertID > 0 && opts.Verbose {
+		fmt.Printf("New note ID:%d\n", lastInsertID)
 	}
 
 	return true
@@ -232,46 +232,46 @@ func cmdAddAttr(db *sql.DB, id int, attrs []string) bool {
 	return true
 }
 
-func cmdUnalias(db *sql.DB, opts Options) bool {
+func cmdUnalias(db *sql.DB, opts options) bool {
 	attr := findAttributeByAlias(db, opts.Alias, true)
-	if attr.GetID() == -1 {
+	if attr.getID() == -1 {
 		log.Fatalf("alias \"%s\" not found", opts.Alias)
 	} else {
-		attr.SetAlias(db, "")
+		attr.setAlias(db, "")
 	}
 	return true
 }
 
-func cmdAlias(db *sql.DB, opts Options) bool {
+func cmdAlias(db *sql.DB, opts options) bool {
 	if !(opts.ID > 0 && len(opts.Alias1) > 0 || len(opts.Alias2) > 0) && !(len(opts.Alias1) > 0 && len(opts.Alias2) > 0) {
 		return false
 	}
 
-	var attr Attr
+	var attr attrStruct
 
 	if opts.ID > 0 {
 		attr = findAttributeByID(db, opts.ID)
 		if len(opts.Alias1) > 0 {
-			attr.SetAlias(db, opts.Alias1)
+			attr.setAlias(db, opts.Alias1)
 		} else if len(opts.Alias2) > 0 {
-			attr.SetAlias(db, opts.Alias2)
+			attr.setAlias(db, opts.Alias2)
 		}
 	} else if len(opts.Alias1) > 0 && len(opts.Alias2) > 0 {
 		attr1 := findAttributeByAlias(db, opts.Alias1, true)
 		attr2 := findAttributeByAlias(db, opts.Alias2, true)
 
-		if attr1.GetID() > 0 && attr2.GetID() <= 0 {
-			attr1.SetAlias(db, opts.Alias2)
-		} else if attr1.GetID() <= 0 && attr2.GetID() > 0 {
-			attr2.SetAlias(db, opts.Alias1)
+		if attr1.getID() > 0 && attr2.getID() <= 0 {
+			attr1.setAlias(db, opts.Alias2)
+		} else if attr1.getID() <= 0 && attr2.getID() > 0 {
+			attr2.setAlias(db, opts.Alias1)
 		} else {
-			log.Println("not changing anything", attr1.GetID(), attr2.GetID())
+			log.Println("not changing anything", attr1.getID(), attr2.getID())
 		}
 	}
 	return true
 }
 
-func cmdEdit(db *sql.DB, opts Options) bool {
+func cmdEdit(db *sql.DB, opts options) bool {
 	var totalUpdated int64
 
 	if len(opts.IDs) == 0 && len(opts.Aliases) == 0 {
@@ -280,12 +280,12 @@ func cmdEdit(db *sql.DB, opts Options) bool {
 
 	for _, id := range opts.IDs {
 		attr := findAttributeByID(db, id)
-		totalUpdated += attr.Edit(db)
+		totalUpdated += attr.edit(db)
 	}
 
 	for _, alias := range opts.Aliases {
 		attr := findAttributeByAlias(db, alias, false)
-		totalUpdated += attr.Edit(db)
+		totalUpdated += attr.edit(db)
 	}
 
 	if opts.Verbose {
@@ -295,18 +295,18 @@ func cmdEdit(db *sql.DB, opts Options) bool {
 	return true
 }
 
-func cmdRm(db *sql.DB, opts Options) bool {
+func cmdRm(db *sql.DB, opts options) bool {
 
 	var totalUpdated int64
 
 	for _, id := range opts.IDs {
 		attr := findAttributeByID(db, id)
-		totalUpdated += attr.Rm(db)
+		totalUpdated += attr.rm(db)
 	}
 
 	for _, alias := range opts.Aliases {
 		attr := findAttributeByAlias(db, alias, true)
-		totalUpdated += attr.Rm(db)
+		totalUpdated += attr.rm(db)
 	}
 
 	if totalUpdated > 0 {
@@ -316,17 +316,17 @@ func cmdRm(db *sql.DB, opts Options) bool {
 	return true
 }
 
-func cmdUnrm(db *sql.DB, opts Options) bool {
+func cmdUnrm(db *sql.DB, opts options) bool {
 	var totalUpdated int64
 
 	for _, id := range opts.IDs {
 		attr := findAttributeByID(db, id)
-		totalUpdated += attr.Unrm(db)
+		totalUpdated += attr.unrm(db)
 	}
 
 	for _, alias := range opts.Aliases {
 		attr := findAttributeByAlias(db, alias, true)
-		totalUpdated += attr.Unrm(db)
+		totalUpdated += attr.unrm(db)
 	}
 
 	if totalUpdated > 0 {
@@ -337,36 +337,36 @@ func cmdUnrm(db *sql.DB, opts Options) bool {
 }
 
 func cmdInit(db *sql.DB) bool {
-	InitializeDatabase(db)
+	initializeDatabase(db)
 	return true
 }
 
-func cmdMark(db *sql.DB, opts Options) bool {
+func cmdMark(db *sql.DB, opts options) bool {
 	var totalUpdated int64
 	for _, id := range opts.IDs {
 		attr := findAttributeByID(db, id)
-		totalUpdated += attr.SetMark(db, 1)
+		totalUpdated += attr.setMark(db, 1)
 	}
 
 	for _, alias := range opts.Aliases {
 		attr := findAttributeByAlias(db, alias, false)
-		totalUpdated += attr.SetMark(db, 1)
+		totalUpdated += attr.setMark(db, 1)
 	}
 
 	fmt.Println(totalUpdated, "marked")
 	return true
 }
 
-func cmdUnmark(db *sql.DB, opts Options) bool {
+func cmdUnmark(db *sql.DB, opts options) bool {
 	var totalUpdated int64
 	for _, id := range opts.IDs {
 		attr := findAttributeByID(db, id)
-		totalUpdated += attr.SetMark(db, 0)
+		totalUpdated += attr.setMark(db, 0)
 	}
 
 	for _, alias := range opts.Aliases {
 		attr := findAttributeByAlias(db, alias, false)
-		totalUpdated += attr.SetMark(db, 0)
+		totalUpdated += attr.setMark(db, 0)
 	}
 
 	fmt.Println(totalUpdated, "marked")

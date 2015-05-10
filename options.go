@@ -11,7 +11,7 @@ const datelayout string = "06/01/02 03:04pm"
 const ellipsis = "…"
 const maximumShownMatches = -1
 
-type Options struct {
+type options struct {
 	ID              int64
 	Alias           string
 	IDs             []int64
@@ -34,7 +34,7 @@ type Options struct {
 	Alias2          string
 }
 
-func OptionsFromArgs(args map[string]interface{}) (opts Options) {
+func optionsFromArgs(args map[string]interface{}) (opts options) {
 	// log.Printf("%v\n", args)
 	var err error
 
@@ -116,7 +116,7 @@ func OptionsFromArgs(args map[string]interface{}) (opts Options) {
 	return
 }
 
-func (opts Options) GetIDsArrayOfInterface() []interface{} {
+func (opts options) getIDsArrayOfInterface() []interface{} {
 	var interfaceIds = make([]interface{}, len(opts.IDs), len(opts.IDs))
 	for i, id := range opts.IDs {
 		interfaceIds[i] = id

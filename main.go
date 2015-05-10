@@ -49,7 +49,7 @@ func main() {
 	args, err := docopt.Parse(usage, nil, true, "version 0.0.0", false, true)
 	check(err)
 
-	opts := OptionsFromArgs(args)
+	opts := optionsFromArgs(args)
 
 	//pwd, _ = os.Getwd()
 
