@@ -23,7 +23,7 @@ eton -h
 ```shell
 # quick add
 eton new 'eton is simple'
-eton new 'https://...
+eton new 'https://...'
 eton new '[ ] try eton'
 
 # create a new note using $EDITOR
