@@ -16,59 +16,94 @@ eton is a note-taking cli tool.
 ```shell
 # display the help message
 eton -h
+```
 
+### new
+
+```shell
 # quick add
+eton new 'eton is simple'
+eton new 'https://...
 eton new '[ ] try eton'
 
-# create a new note and open $EDITOR to edit it
+# create a new note using $EDITOR
 eton new
 
-# edit the last item
+# add from STDIN
+ps aux |eton new -
+
+# add files
+eton addfile file1.txt file2.txt
+find -type f |eton addfile -
+```
+
+### edit
+
+```shell
+# edit last item
 eton edit
 
-# add text from STDIN
-ps aux | eton new -
+# edit items
+eton edit processes 1
+```
 
-# add a file
-eton addfile file.txt
+### alias
 
-# use the alias instead of its id
-eton show 2
-
+```shell
 # set a unique alias
-eton alias 2 procs
+eton alias 3 procs
 
 # use the alias, so you don't need to remember its id
 eton cat procs
+eton edit procs
+eton show procs
 
-# you can rename an alias
+# rename an alias
 eton alias procs processes
+
+# remove an alias
+eton unalias processes
+```
+
+### mark
+
+```shell
+# mark an item
+eton mark processes
+
+# unmark an item
+eton unmark processes
+```
+
+### ls
+
+```shell
+# list recent items
+eton ls
+
+# filter items containing words "eton" AND "simple"
+eton ls eton simple
 
 # list all items
 eton ls -a
 
-# filter items containing words "word1" AND "word2"
-eton ls word1 word2
-
-# you can mark specific items
-eton mark processes 1
-
 # only list marked items (short mode)
 eton ls -s
-
-# edit items
-eton edit processes 1
-
-# alias matching is fuzzy for these commands: cat, show, edit, mark, unmark
-eton cat prcs
 
 # pass items to xargs as filenames:
 eton ls '[ ]' -l |xargs -i less {}
 ```
 
-Notes are stored in `~/.etondb`
+### more
 
 ```shell
+# alias matching is fuzzy for these commands: cat, show, edit, mark, unmark
+eton cat prs
+
+# view items 1, 2, and 3 using less
+eton show 1 2 3
+
+# Notes are stored in `~/.etondb`
 echo 'SELECT * FROM attributes LIMIT 10;' |sqlite3 ~/.etondb
 ```
 
