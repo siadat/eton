@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"database/sql"
+	"fmt"
 	"github.com/docopt/docopt-go"
 	_ "github.com/mattn/go-sqlite3"
 	"log"
@@ -46,8 +47,20 @@ Options:
 `
 
 func main() {
-	args, err := docopt.Parse(usage, nil, true, "version 0.0.0", false, true)
-	check(err)
+	args, err := docopt.Parse(usage, nil, true, "version 0.0.0", false, false)
+
+	if err != nil || len(args) == 0 {
+		editor := os.Getenv("EDITOR")
+		if len(editor) == 0 {
+			fmt.Println()
+			fmt.Println("    Set $EDITOR to your prefered editor, e.g.:")
+			fmt.Println("        export EDITOR=vim")
+		} else {
+			fmt.Println()
+			fmt.Printf("    $EDITOR: %s\n", editor)
+		}
+		os.Exit(1)
+	}
 
 	opts := optionsFromArgs(args)
 
