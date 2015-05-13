@@ -422,7 +422,7 @@ func (attr attrStruct) edit(db *sql.DB) (rowsAffected int64) {
 		for {
 			select {
 			case event := <-watcher.Events:
-				if event.Op&fsnotify.Create == fsnotify.Create {
+				if event.Op&fsnotify.Create == fsnotify.Create || event.Op&fsnotify.Write == fsnotify.Write {
 					if event.Name == filepath {
 						valueText := readFile(filepath)
 						rowsAffected = attr.updateDb(db, valueText)
