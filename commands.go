@@ -20,7 +20,7 @@ import (
 // var globalOpts options
 
 // const orderby = "-frequency, -mark, CASE WHEN updated_at IS NULL THEN created_at ELSE updated_at END DESC"
-const orderby = "-mark, CASE WHEN updated_at IS NULL THEN created_at ELSE updated_at END DESC"
+const orderby = "CASE WHEN updated_at IS NULL THEN created_at ELSE updated_at END DESC"
 const defaultEditor = "vi"
 
 func cmdShow(db *sql.DB, opts options) bool {
