@@ -6,15 +6,16 @@ import (
 	"github.com/andrew-d/go-termutil"
 	"github.com/mattn/go-colorable"
 	"github.com/mgutz/ansi"
+	"gopkg.in/fsnotify.v1"
 	"io/ioutil"
 	"log"
 	"os"
+	fp "path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
 	"text/tabwriter"
 	"time"
-	"gopkg.in/fsnotify.v1"
 )
 
 var out = colorable.NewColorableStdout()
@@ -414,9 +415,7 @@ func (attr attrStruct) edit(db *sql.DB) (rowsAffected int64) {
 	filepath := attr.filepath()
 
 	watcher, err := fsnotify.NewWatcher()
-	if err != nil {
-		log.Fatal(err)
-	}
+	check(err)
 	defer watcher.Close()
 	done := make(chan bool)
 	go func() {
@@ -424,7 +423,7 @@ func (attr attrStruct) edit(db *sql.DB) (rowsAffected int64) {
 			select {
 			case event := <-watcher.Events:
 				if event.Op&fsnotify.Create == fsnotify.Create {
-					if (event.Name == filepath) {
+					if event.Name == filepath {
 						valueText := readFile(filepath)
 						rowsAffected = attr.updateDb(db, valueText)
 					}
@@ -438,10 +437,8 @@ func (attr attrStruct) edit(db *sql.DB) (rowsAffected int64) {
 		}
 	}()
 
-	err = watcher.Add("/tmp")
-	if err != nil {
-		log.Fatal(err)
-	}
+	err = watcher.Add(fp.Dir(filepath))
+	check(err)
 
 	defer func() {
 		done <- true
