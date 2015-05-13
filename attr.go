@@ -6,9 +6,11 @@ import (
 	"github.com/andrew-d/go-termutil"
 	"github.com/mattn/go-colorable"
 	"github.com/mgutz/ansi"
+	"gopkg.in/fsnotify.v1"
 	"io/ioutil"
 	"log"
 	"os"
+	fp "path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
@@ -398,8 +400,49 @@ func (attr attrStruct) incrementFrequency(db *sql.DB) (rowsAffected int64) {
 	return
 }
 
+func (attr attrStruct) updateDb(db *sql.DB, valueText string) (rowsAffected int64) {
+	updateStmt, err := db.Prepare("UPDATE attributes SET value_text = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?")
+	check(err)
+
+	result, err := updateStmt.Exec(valueText, attr.getID())
+	check(err)
+	rowsAffected, err = result.RowsAffected()
+	check(err)
+	return rowsAffected
+}
+
 func (attr attrStruct) edit(db *sql.DB) (rowsAffected int64) {
 	filepath := attr.filepath()
+
+	watcher, err := fsnotify.NewWatcher()
+	check(err)
+	defer watcher.Close()
+	done := make(chan bool)
+	go func() {
+		for {
+			select {
+			case event := <-watcher.Events:
+				if event.Op&fsnotify.Create == fsnotify.Create {
+					if event.Name == filepath {
+						valueText := readFile(filepath)
+						rowsAffected = attr.updateDb(db, valueText)
+					}
+				}
+			case err := <-watcher.Errors:
+				log.Println("error:", err)
+			case <-done:
+				// Edit the gofunction
+				return
+			}
+		}
+	}()
+
+	err = watcher.Add(fp.Dir(filepath))
+	check(err)
+
+	defer func() {
+		done <- true
+	}()
 
 	if openEditor(filepath) == false {
 		return
@@ -408,13 +451,7 @@ func (attr attrStruct) edit(db *sql.DB) (rowsAffected int64) {
 	valueText := readFile(filepath)
 
 	if valueText != attr.getValue() {
-		updateStmt, err := db.Prepare("UPDATE attributes SET value_text = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?")
-		check(err)
-
-		result, err := updateStmt.Exec(valueText, attr.getID())
-		check(err)
-		rowsAffected, err = result.RowsAffected()
-		check(err)
+		rowsAffected = attr.updateDb(db, valueText)
 	}
 	return
 }
