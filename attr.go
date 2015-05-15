@@ -230,9 +230,14 @@ func (attr attrStruct) print(w *tabwriter.Writer, verbose bool, indent int, high
 		//fmt.Printf(strings.Repeat("      ", indent))
 
 		if attr.getMark() == 0 {
-			fmt.Fprintf(out, "[%s] %s\n", color(attr.getIdentifier(), "yellow+b"), attr.title())
+			fmt.Fprintf(out, "%s: %s\n", color(attr.getIdentifier(), "yellow+b"), attr.title())
 		} else {
-			fmt.Fprintf(out, "%s %s\n", color("("+attr.getIdentifier()+")", "black+b:white"), color(attr.title(), "default"))
+			if isOutputColored() {
+				fmt.Fprintf(out, "%s: %s\n", color(attr.getIdentifier(), "green"), color(attr.title(), "default"))
+			} else {
+				fmt.Fprintf(out, "[%s]: %s\n", attr.getIdentifier(), attr.title())
+			}
+
 		}
 		if len(highlighteds) > 0 {
 			fmt.Fprintln(out, attr.prettyMatches(highlighteds, after))
@@ -516,14 +521,14 @@ func prettyAttr(name, value string) string {
 	if len(name) > 0 {
 		name = name + ":"
 	}
-	if termutil.Isatty(os.Stdout.Fd()) {
+	if isOutputColored() {
 		return ansi.Color(name, "black") + ansi.Color(value, "default")
 	}
 	return name + value
 }
 
 func prettyAttr2(name, value string) string {
-	if termutil.Isatty(os.Stdout.Fd()) {
+	if isOutputColored() {
 		return ansi.Color(name+":", "black") + ansi.Color(value, "blue")
 	}
 	return name + ":" + value
@@ -531,10 +536,14 @@ func prettyAttr2(name, value string) string {
 
 // color is the same as ansi.Color but only if STDOUT is a TTY
 func color(str, color string) string {
-	if termutil.Isatty(os.Stdout.Fd()) {
+	if isOutputColored() {
 		return ansi.Color(str, color)
 	}
 	return str
+}
+
+func isOutputColored() bool {
+	return termutil.Isatty(os.Stdout.Fd())
 }
 
 func findAttributeByID(db *sql.DB, ID int64) (attr attrStruct) {
