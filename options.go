@@ -6,10 +6,12 @@ import (
 	"strconv"
 )
 
-const novalue string = "nil"
-const datelayout string = "06/01/02 03:04pm"
-const ellipsis = "…"
-const maximumShownMatches = -1
+const (
+	novalue         = "nil"
+	datelayout      = "06/01/02 03:04pm"
+	ellipsis        = "…"
+	maxShownMatches = -1
+)
 
 type options struct {
 	ID              int64
@@ -40,15 +42,14 @@ func optionsFromArgs(args map[string]interface{}) (opts options) {
 
 	opts.RootID = -1
 	opts.Indent = 0
-
-	opts.Offset, err = strconv.Atoi(args["--offset"].(string))
-	check(err)
-
 	opts.ListFilepaths = args["--list-files"].(bool)
 
 	if args["<note>"] != nil {
 		opts.Note = args["<note>"].(string)
 	}
+
+	opts.Offset, err = strconv.Atoi(args["--offset"].(string))
+	check(err)
 
 	opts.AfterLinesCount, err = strconv.Atoi(args["--after"].(string))
 	check(err)
@@ -72,7 +73,7 @@ func optionsFromArgs(args map[string]interface{}) (opts options) {
 	if args["<mountpoint>"] != nil {
 		opts.MountPoint = args["<mountpoint>"].(string)
 	} else {
-		opts.MountPoint = filepath.Join(homeDirectory(), "eton-default-mount-point")
+		opts.MountPoint = filepath.Join(homeDir(), "eton-default-mount-point")
 	}
 
 	if args["<id2>"] != nil {
@@ -110,10 +111,9 @@ func optionsFromArgs(args map[string]interface{}) (opts options) {
 	opts.FromStdin = args["-"].(bool)
 	opts.Recursive = false // args["--recursive"].(bool)
 	opts.IncludeRemoved = args["--removed"].(bool)
-
 	opts.ShortMode = args["--short"].(bool)
 	opts.Verbose = args["--verbose"].(bool)
-	return
+	return opts
 }
 
 func (opts options) getIDsArrayOfInterface() []interface{} {
@@ -124,7 +124,7 @@ func (opts options) getIDsArrayOfInterface() []interface{} {
 	return interfaceIds
 }
 
-func homeDirectory() string {
+func homeDir() string {
 	usr, err := user.Current()
 	check(err)
 	return usr.HomeDir

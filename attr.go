@@ -272,7 +272,7 @@ func (attr attrStruct) prettyMatches(highlighteds []string, after int) string {
 				//prefix := fmt.Sprintf("%s L%s:", strings.Repeat(" ", len(attr.getIdentifier())), strconv.Itoa(linenumber+1))
 				prefix := fmt.Sprintf("%s", strings.Repeat(" ", 3+len(attr.getIdentifier())))
 				matchinglines = append(matchinglines, color(prefix, "black")+line)
-				if maximumShownMatches != -1 && matchCounter >= maximumShownMatches {
+				if maxShownMatches != -1 && matchCounter >= maxShownMatches {
 					break
 				}
 			}
@@ -339,13 +339,11 @@ func (attr attrStruct) setAlias(db *sql.DB, alias string) {
 	stmt, err := db.Prepare("UPDATE attributes SET alias = ? WHERE id = ?")
 	check(err)
 
-	//var result sql.Result
 	if !unset {
 		_, err = stmt.Exec(alias, attr.getID())
 	} else {
 		_, err = stmt.Exec(nil, attr.getID())
 	}
-	//check(err)
 	if err == nil {
 		if unset {
 			fmt.Fprintf(out, "ID:%d unaliased\n", attr.getID())
@@ -355,7 +353,6 @@ func (attr attrStruct) setAlias(db *sql.DB, alias string) {
 	} else {
 		log.Fatalf("error while setting alias \"%s\" for ID:%d -- alias must be unique\n", alias, attr.getID()) // , err)
 	}
-	//rowsAffected, err := result.RowsAffected()
 }
 
 func (attr attrStruct) setMark(db *sql.DB, mark int) (rowsAffected int64) {
@@ -451,7 +448,7 @@ func (attr attrStruct) edit(db *sql.DB) (rowsAffected int64) {
 	}()
 
 	if openEditor(filepath) == false {
-		return
+		return rowsAffected
 	}
 
 	valueText := readFile(filepath)
@@ -459,10 +456,8 @@ func (attr attrStruct) edit(db *sql.DB) (rowsAffected int64) {
 	if valueText != attr.getValue() {
 		rowsAffected = attr.updateDb(db, valueText)
 	}
-	return
+	return rowsAffected
 }
-
-/******************************************************************************/
 
 func writeToFile(filepath string, content string) {
 	err := ioutil.WriteFile(filepath, []byte(content), 0644)
@@ -582,11 +577,11 @@ func findAttributeByAlias(db *sql.DB, alias string, exactMatchOnly bool) (attr a
 	check(err)
 	err = stmt.QueryRow(alias).Scan(&attr.ID, &attr.ValueText, &attr.Name, &attr.ParentID, &attr.Alias, &attr.Mark, &attr.ValueBlob, &attr.CreatedAt, &attr.UpdatedAt)
 	if err == nil {
-		return
+		return attr
 	}
 
 	if exactMatchOnly {
-		return
+		return attr
 	}
 
 	stmt, err = db.Prepare("SELECT " + sqlSelect + " FROM attributes WHERE alias LIKE ? ORDER BY " + orderby + " LIMIT 1")
@@ -595,13 +590,13 @@ func findAttributeByAlias(db *sql.DB, alias string, exactMatchOnly bool) (attr a
 	// Prefix match
 	err = stmt.QueryRow(alias+"%").Scan(&attr.ID, &attr.ValueText, &attr.Name, &attr.ParentID, &attr.Alias, &attr.Mark, &attr.ValueBlob, &attr.CreatedAt, &attr.UpdatedAt)
 	if err == nil {
-		return
+		return attr
 	}
 
 	// Postfix match
 	err = stmt.QueryRow("%"+alias).Scan(&attr.ID, &attr.ValueText, &attr.Name, &attr.ParentID, &attr.Alias, &attr.Mark, &attr.ValueBlob, &attr.CreatedAt, &attr.UpdatedAt)
 	if err == nil {
-		return
+		return attr
 	}
 
 	prunes := strings.Split(alias, "")
@@ -609,10 +604,10 @@ func findAttributeByAlias(db *sql.DB, alias string, exactMatchOnly bool) (attr a
 	// Fuzzy match
 	err = stmt.QueryRow("%"+strings.Join(prunes, "%")+"%").Scan(&attr.ID, &attr.ValueText, &attr.Name, &attr.ParentID, &attr.Alias, &attr.Mark, &attr.ValueBlob, &attr.CreatedAt, &attr.UpdatedAt)
 	if err == nil {
-		return
+		return attr
 	}
 
-	return
+	return attr
 }
 
 func findAttributeByAliasOrID(db *sql.DB, indentifier string) (attr attrStruct) {
@@ -687,8 +682,6 @@ func listWithFilters(db *sql.DB, opts options) (attrs []attrStruct) {
 		sqlLimit = "LIMIT ?, ?"
 	}
 
-	// ===========================================================================
-
 	tx, err := db.Begin()
 	check(err)
 	stmt, err = tx.Prepare("SELECT " + sqlSelect + " FROM attributes WHERE " + sqlConditions + " ORDER BY " + orderby + " " + sqlLimit)
@@ -710,7 +703,6 @@ func listWithFilters(db *sql.DB, opts options) (attrs []attrStruct) {
 		optsNew = opts
 		optsNew.RootID = attr.getID()
 		optsNew.Indent += 2
-		//cmdLs(db, w, optsNew)
 	}
 
 	tx.Commit()
@@ -739,7 +731,7 @@ func saveString(db *sql.DB, valueText string) (lastInsertID int64) {
 	lastInsertID, err = result.LastInsertId()
 	check(err)
 
-	return
+	return lastInsertID
 }
 
 func initializeDatabase(db *sql.DB) bool {
@@ -753,7 +745,6 @@ func initializeDatabase(db *sql.DB) bool {
 		parent_id   INTEGER,
 		frequency   INTEGER DEFAULT 0,
 		mark        INTEGER DEFAULT 0,
-		-- pwd      TEXT,
 
 		value_text  TEXT,
 		value_blob  BLOB,

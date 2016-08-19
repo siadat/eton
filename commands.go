@@ -17,12 +17,11 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-// var globalDB *sql.DB
-// var globalOpts options
-
 // const orderby = "-frequency, -mark, CASE WHEN updated_at IS NULL THEN created_at ELSE updated_at END DESC"
-const orderby = "CASE WHEN updated_at IS NULL THEN created_at ELSE updated_at END DESC"
-const defaultEditor = "vi"
+const (
+	orderby       = "CASE WHEN updated_at IS NULL THEN created_at ELSE updated_at END DESC"
+	defaultEditor = "vi"
+)
 
 func cmdShow(db *sql.DB, opts options) bool {
 	if len(opts.IDs) == 0 && len(opts.Aliases) == 0 {
@@ -31,13 +30,11 @@ func cmdShow(db *sql.DB, opts options) bool {
 
 	for _, id := range opts.IDs {
 		attr := findAttributeByID(db, id)
-		//fmt.Printf(attr.getValue())
 		printToLess(attr.getValue())
 	}
 
 	for _, alias := range opts.Aliases {
 		attr := findAttributeByAlias(db, alias, false)
-		//fmt.Printf(attr.getValue())
 		printToLess(attr.getValue())
 	}
 	return true
@@ -75,7 +72,6 @@ func cmdMount(db *sql.DB, opts options) bool {
 func cmdAddFiles(db *sql.DB, files []string) bool {
 	tx, err := db.Begin()
 
-	// stmt, err := tx.Prepare("INSERT INTO attributes (name, pwd, value_text, value_blob) VALUES (?, ?, ?, ?)")
 	stmt, err := tx.Prepare("INSERT INTO attributes (name, value_text, value_blob) VALUES (?, ?, ?)")
 
 	if err != nil {
@@ -94,13 +90,11 @@ func cmdAddFiles(db *sql.DB, files []string) bool {
 		}
 
 		fileAbsPath, err := filepath.Abs(file)
-		// fileRelPath, err := filepath.Rel(pwd, fileAbsPath)
 
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		//_, err = stmt.Exec("file", pwd, fileRelPath, content)
 		_, err = stmt.Exec("file", fileAbsPath, content)
 		if err != nil {
 			log.Fatal(err)
@@ -124,7 +118,6 @@ func cmdLs(db *sql.DB, w *tabwriter.Writer, opts options) bool {
 }
 
 func cmdNew(db *sql.DB, opts options) bool {
-
 	var valueText string
 
 	if opts.FromStdin {
@@ -374,8 +367,6 @@ func cmdUnmark(db *sql.DB, opts options) bool {
 	return true
 }
 
-/******************************************************************************/
-
 func openEditor(filepath string) bool {
 	var cmd *exec.Cmd
 
@@ -410,17 +401,16 @@ func readFile(filepath string) string {
 
 func check(e error) {
 	if e != nil {
-		// log.Fatal(e)
 		panic(e)
 	}
 }
 
 func printToLess(text string) {
-	// declare your pager
+	// declare pager
 	cmd := exec.Command("/usr/bin/env", "less")
 	// create a pipe (blocking)
 	r, stdin := io.Pipe()
-	// Set your i/o's
+	// set IOs
 	cmd.Stdin = r
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr

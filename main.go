@@ -16,7 +16,6 @@ import (
 )
 
 var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
-var pwd string
 
 const dbfilename string = ".etondb"
 
@@ -65,9 +64,7 @@ func main() {
 
 	opts := optionsFromArgs(args)
 
-	//pwd, _ = os.Getwd()
-
-	dbfile := filepath.Join(homeDirectory(), dbfilename)
+	dbfile := filepath.Join(homeDir(), dbfilename)
 	var db *sql.DB
 
 	dbfileExists := false
