@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"database/sql"
 	"fmt"
-	_ "github.com/mattn/go-sqlite3"
 	"io"
 	"io/ioutil"
 	"log"
@@ -14,6 +13,8 @@ import (
 	"path/filepath"
 	"strings"
 	"text/tabwriter"
+
+	_ "github.com/mattn/go-sqlite3"
 )
 
 // var globalDB *sql.DB

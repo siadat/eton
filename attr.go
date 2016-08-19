@@ -3,10 +3,6 @@ package main
 import (
 	"database/sql"
 	"fmt"
-	"github.com/andrew-d/go-termutil"
-	"github.com/mattn/go-colorable"
-	"github.com/mgutz/ansi"
-	"gopkg.in/fsnotify.v1"
 	"io/ioutil"
 	"log"
 	"os"
@@ -16,6 +12,11 @@ import (
 	"strings"
 	"text/tabwriter"
 	"time"
+
+	"github.com/andrew-d/go-termutil"
+	"github.com/mattn/go-colorable"
+	"github.com/mgutz/ansi"
+	"gopkg.in/fsnotify.v1"
 )
 
 var out = colorable.NewColorableStdout()

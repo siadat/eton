@@ -4,14 +4,15 @@ import (
 	"bufio"
 	"database/sql"
 	"fmt"
-	"github.com/docopt/docopt-go"
-	_ "github.com/mattn/go-sqlite3"
 	"log"
 	"math/rand"
 	"os"
 	"path/filepath"
 	"strconv"
 	"text/tabwriter"
+
+	"github.com/docopt/docopt-go"
+	_ "github.com/mattn/go-sqlite3"
 )
 
 var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
