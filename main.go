@@ -40,7 +40,7 @@ Options:
     -L, --limit LIMIT    maximum number of rows returned, pass -Lall to list everything [default: 10]
     -r, --recursive      recursive mode
     -l, --list-files     list items as filenames
-	-i, --list-ids       list items as ids
+    -i, --list-ids       list items as ids
     -s, --short          short mode lists rows with aliases only
     -v, --verbose        talk a lot
     -a, --all            list all items, alias for --limit -1
