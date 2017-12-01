@@ -110,6 +110,10 @@ func cmdLs(db *sql.DB, w *tabwriter.Writer, opts options) bool {
 	for _, attr := range attrs {
 		if opts.ListFilepaths {
 			fmt.Println(attr.filepath())
+		} else if opts.ListIDs {
+			val, err := attr.ID.Value()
+			check(err)
+			fmt.Printf("%d\n", val)
 		} else {
 			attr.print(w, opts.Recursive, opts.Indent, opts.Filters, opts.AfterLinesCount)
 		}

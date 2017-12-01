@@ -29,6 +29,7 @@ type options struct {
 	ShortMode       bool
 	Verbose         bool
 	ListFilepaths   bool
+	ListIDs         bool
 	MountPoint      string
 	Note            string
 	AfterLinesCount int
@@ -43,6 +44,7 @@ func optionsFromArgs(args map[string]interface{}) (opts options) {
 	opts.RootID = -1
 	opts.Indent = 0
 	opts.ListFilepaths = args["--list-files"].(bool)
+	opts.ListIDs = args["--list-ids"].(bool)
 
 	if args["<note>"] != nil {
 		opts.Note = args["<note>"].(string)

@@ -21,7 +21,7 @@ const dbfilename string = ".etondb"
 
 const usage string = `Usage:
     eton new [-|<note>] [-v]
-    eton (ls|grep) [<filters>...] [-asl] [-o OFFSET] [-L LIMIT] [--after AFTER] [--removed]
+    eton (ls|grep) [<filters>...] [-asli] [-o OFFSET] [-L LIMIT] [--after AFTER] [--removed]
     eton edit [<ids>...] [-v]
     eton alias <id1> <id2>
     eton unalias <alias>
@@ -40,6 +40,7 @@ Options:
     -L, --limit LIMIT    maximum number of rows returned, pass -Lall to list everything [default: 10]
     -r, --recursive      recursive mode
     -l, --list-files     list items as filenames
+    -i, --list-ids       list items as ids
     -s, --short          short mode lists rows with aliases only
     -v, --verbose        talk a lot
     -a, --all            list all items, alias for --limit -1
