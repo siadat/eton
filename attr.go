@@ -6,7 +6,6 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
-	fp "path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
@@ -316,7 +315,10 @@ func (attr attrStruct) prettyUpdatedAt() string {
 }
 
 func (attr attrStruct) filepath() string {
-	f, err := ioutil.TempFile("", "eton-edit")
+	// FIXME Temporary directory /tmp/ probably only works on Linux and macOS
+	// however, I'm using /tmp/ because on macOS the fsnotify is not able to
+	// watch the file when I leave this directory empty (Go chooses /var/tmp/)
+	f, err := ioutil.TempFile("/tmp/", "eton-edit")
 	check(err)
 	f.Close()
 	writeToFile(f.Name(), attr.getValue())
@@ -440,7 +442,7 @@ func (attr attrStruct) edit(db *sql.DB) (rowsAffected int64) {
 		}
 	}()
 
-	err = watcher.Add(fp.Dir(filepath))
+	err = watcher.Add(filepath)
 	check(err)
 
 	defer func() {
